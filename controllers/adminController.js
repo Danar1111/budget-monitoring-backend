@@ -14,7 +14,7 @@ exports.getUsers = async (req, res) => {
     const offset = (pageNumber - 1) * pageSize;
 
     try {
-        const [users] = await db.execute('SELECT * FROM users WHERE role = "guest" OR role = "user" OR role = "approval" LIMIT ? OFFSET ?', [pageSize, offset]);
+        const [users] = await db.execute('SELECT id, username, role FROM users WHERE role = "guest" OR role = "user" OR role = "approval" LIMIT ? OFFSET ?', [pageSize, offset]);
         const [total] = await db.execute('SELECT COUNT(*) as total FROM users');
         const totalUser = total[0].total;
 
@@ -24,7 +24,7 @@ exports.getUsers = async (req, res) => {
             totalUser: totalUser,
             currentPage: pageNumber,
             pageSize: pageSize,
-            users: users,
+            users: users
         });
     } catch (err) {
         console.error('Erorr fetching users:', err);
@@ -32,13 +32,13 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-exports.getDetailUsers = async (req, res) => {
+exports.getDetailUser = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const { uid } = req.query;
+    const { uid } = req.params;
 
     try {
         const [user] = await db.execute('SELECT * FROM users WHERE id = ?', [uid]);
@@ -48,8 +48,10 @@ exports.getDetailUsers = async (req, res) => {
             message: 'User detail fetched successfully',
             users: {
                 id: user[0].id,
+                email: user[0].email,
                 username: user[0].username,
-                role: user[0].role
+                role: user[0].role,
+                dateTimeRegistered: user[0].create_at
             },
         });
     } catch (err) {
@@ -64,7 +66,8 @@ exports.enrollUsers = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const { uid, role } = req.query;
+    const { uid } = req.params;
+    const { role } = req.body;
 
     try {
         await db.execute('UPDATE users SET role = ? WHERE id = ?', [role, uid]);
@@ -74,8 +77,10 @@ exports.enrollUsers = async (req, res) => {
             message: 'Enroll successfully',
             users: {
                 id: user[0].id,
+                email: user[0].email,
                 username: user[0].username,
-                role: user[0].role
+                role: user[0].role,
+                dateTimeRegistered: user[0].create_at
             },
         });
     } catch (err) {

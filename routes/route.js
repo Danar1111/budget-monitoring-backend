@@ -36,4 +36,31 @@ router.post(
     }
 )
 
+router.get(
+    '/getallusers',
+    authenticateToken,
+    authorizeRoles('admin'),
+    (req, res, next) => {
+        adminController.getUsers(req, res, next);
+    }
+)
+
+router.get(
+    '/:uid',
+    authenticateToken,
+    authorizeRoles('admin'),
+    (req, res, next) => {
+        adminController.getDetailUser(req, res, next);
+    }
+)
+
+router.post(
+    '/:uid/enroll',
+    authenticateToken,
+    authorizeRoles('admin'),
+    (req, res, next) => {
+        adminController.enrollUsers(req, res, next);
+    }
+)
+
 module.exports = router;
