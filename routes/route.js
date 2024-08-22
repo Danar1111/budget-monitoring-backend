@@ -24,7 +24,7 @@ router.post(
     '/register',
     [
         check('email', 'Email is require').not().isEmpty(),
-        check('username', 'Username is reequired').not().isEmpty,
+        check('username', 'Username is required').not().isEmpty(),
         check('password', 'Password must be at least 8 characters').isLength({ min: 8 }),
     ],
     (req, res, next) => {

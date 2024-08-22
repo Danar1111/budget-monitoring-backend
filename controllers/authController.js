@@ -2,6 +2,7 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult }= require('express-validator');
+const crypto = require('crypto');
 
 exports.login = async (req, res) => {
     const errors = validationResult(req);
@@ -66,7 +67,7 @@ exports.register = async (req, res) => {
 
     try {
         const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
-        if (user.length === 0) {
+        if (user.length > 0) {
             return res.status(400).json({ error: true, message: 'Email already exist'});
         }
 
