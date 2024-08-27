@@ -2,7 +2,7 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { authenticateToken, authorizeRoles } = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeRoles, authorizeDivision } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
 
 router.post(
@@ -24,7 +24,7 @@ router.post(
     '/register',
     [
         check('email', 'Email is require').not().isEmpty(),
-        check('username', 'Username is required').not().isEmpty(),
+        check('nama', 'Name is required').not().isEmpty(),
         check('password', 'Password must be at least 8 characters').isLength({ min: 8 }),
     ],
     (req, res, next) => {
@@ -39,16 +39,41 @@ router.post(
 router.get(
     '/getallusers',
     authenticateToken,
-    authorizeRoles('admin'),
+    authorizeRoles('supervisor'),
+    authorizeDivision('admin'),
     (req, res, next) => {
         adminController.getUsers(req, res, next);
     }
 )
 
+
+router.post(
+    '/adddivision',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('admin'),
+    (req, res, next) => {
+        adminController.addDvision(req, res, next);
+    }
+)
+
+router.get(
+    '/getdivision',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('admin'),
+    (req, res, next) => {
+        adminController.getDivision(req, res, next);
+    }
+)
+
+// get dengan uid sebagai parameter harus paling bawah
+
 router.get(
     '/:uid',
     authenticateToken,
-    authorizeRoles('admin'),
+    authorizeRoles('supervisor'),
+    authorizeDivision('admin'),
     (req, res, next) => {
         adminController.getDetailUser(req, res, next);
     }
@@ -57,7 +82,8 @@ router.get(
 router.post(
     '/:uid/enroll',
     authenticateToken,
-    authorizeRoles('admin'),
+    authorizeRoles('supervisor'),
+    authorizeDivision('admin'),
     (req, res, next) => {
         adminController.enrollUsers(req, res, next);
     }

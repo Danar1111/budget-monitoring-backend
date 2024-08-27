@@ -7,42 +7,48 @@ const crypto = require('crypto');
 exports.login = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({error : errors.array()});
+        return res.status(400).json({error : errors.array() });
     }
 
     const { email, password } = req.body;
 
     try {
-        const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+        const [user] = await db.execute('SELECT * FROM users LEFT JOIN divisi on users.idDivisi = divisi.idDivisi WHERE email = ?', [email]);
         if (user.length === 0 ) {
             return res.status(400).json({error: true, message: 'Invalid Credentials'});
         }
 
-        const validPassword = await bcrypt.compare(password, user[0].password);
+        const validPassword = await bcrypt.compare(password, user[0].Password);
 
         if (!validPassword) {
             return res.status(400).json({error: true, message: 'Wrong Password'});
         }
 
+        // redirect page
+
         let redirecUrl;
-        if (user[0].role === 'admin') {
+        if (user[0].Role === 'supervisor' && user[0].Nama_Divisi === 'admin') {
             redirecUrl = '/admin';
-        } else if (user[0].role === 'approval') {
-            redirecUrl = '/approval';
-        } else if (user[0].role === 'user') {
+        } else if (user[0].Role === 'supervisor' && user[0].Nama_Divisi === 'finance') {
+            redirecUrl = '/finance';
+        } else if (user[0].Role === 'supervisor') {
+            redirecUrl = '/supervisor';
+        } else if (user[0].Role === 'user') {
             redirecUrl = '/home';
         } else {
             return res.status(200).json({error: true, message: 'not enrolled yet'});
         }
 
-        const token = jwt.sign({ id: user[0].id , role: user[0].role}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user[0].id , divisi: user[0].Nama_Divisi, role: user[0].Role}, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.header('Authorization', token).send({
             error: false,
             message: 'Login Successfully',
             loginResult: {
-                userID: user[0].id,
+                id: user[0].idUser,
                 email: email,
-                username: user[0].username,
+                nama: user[0].Nama,
+                role: user[0].Role,
+                divisi: user[0].Nama_Divisi,
                 token,
                 redirecUrl,
             }
@@ -63,7 +69,7 @@ exports.register = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     };
 
-    const { email, username, password } = req.body;
+    const { email, nama, password } = req.body;
 
     try {
         const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
@@ -76,7 +82,9 @@ exports.register = async (req, res) => {
 
         const userId = generatedId();
 
-        await db.execute('INSERT INTO users (id, email, username, password) VALUES (?, ?, ?, ?)', [userId, email, username, hashedPassword]);
+        const role = 'guest';
+
+        await db.execute('INSERT INTO users (idUser, Email, Nama, Role, Password) VALUES (?, ?, ?, ?, ?)', [userId, email, nama, role, hashedPassword]);
 
         res.status(200).send({
             error: false,
@@ -84,8 +92,8 @@ exports.register = async (req, res) => {
             user:{
                 id: userId,
                 email: email,
-                username: username,
-                role: 'guest'
+                nama: nama,
+                role: role
             }
         });
     } catch (err) {

@@ -22,4 +22,13 @@ const authorizeRoles = (...roles) => {
     };
 };
 
-module.exports = { authenticateToken, authorizeRoles };
+const authorizeDivision = (...division) => {
+    return (req, res, next) => {
+        if (!division.includes(req.user.divisi)) {
+            return res.status(403).json({ error: true, message: 'Access Denied: You are not in this division' });
+        }
+        next();
+    };
+};
+
+module.exports = { authenticateToken, authorizeRoles, authorizeDivision };
