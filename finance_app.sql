@@ -178,7 +178,7 @@ CREATE TABLE `request_item_actual_pengeluaran` (
   `Sisa_Anggaran_Kategori` decimal(10,0) NOT NULL,
   `isAprroved` BOOLEAN NOT NULL,
   `Notes` VARCHAR(500)
-  PRIMARY KEY (`idItem`),
+  PRIMARY KEY (`idRequest_Item`),
   FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
