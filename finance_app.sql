@@ -169,6 +169,19 @@ CREATE TABLE `item_actual_pengeluaran` (
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `request_item_actual_pengeluaran` (
+  `idRequest_Item` varchar(50) NOT NULL,
+  `idActualPengeluaran` varchar(50),
+  `idKategori` varchar(50),
+  `Nama_Item` varchar(100) NOT NULL,
+  `Harga` decimal(10,0) NOT NULL,
+  `Sisa_Anggaran_Kategori` decimal(10,0) NOT NULL,
+  `isAprroved` BOOLEAN NOT NULL,
+  `Notes` VARCHAR(500)
+  PRIMARY KEY (`idItem`),
+  FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
+  FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
