@@ -53,13 +53,13 @@ CREATE TABLE `users` (
 
 CREATE TABLE `forecast_pemasukan` (
   `idForecastPemasukan` varchar(50) NOT NULL,
-  `idDivisi` varchar(50),
+  `idUser` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pemasukan` decimal(10,0) NOT NULL,
   `isApproved` tinyint(1) NOT NULL,
   PRIMARY KEY (`idForecastPemasukan`),
-  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -69,13 +69,13 @@ CREATE TABLE `forecast_pemasukan` (
 
 CREATE TABLE `forecast_pengeluaran` (
   `idForecastPengeluaran` varchar(50) NOT NULL,
-  `idDivisi` varchar(50),
+  `idUser` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pengeluaran` decimal(10,0) NOT NULL,
   `isApproved` tinyint(1) NOT NULL,
   PRIMARY KEY (`idForecastPengeluaran`),
-  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -85,12 +85,12 @@ CREATE TABLE `forecast_pengeluaran` (
 
 CREATE TABLE `actual_pemasukan` (
   `idActualPemasukan` varchar(50) NOT NULL,
-  `idDivisi` varchar(50),
+  `idUser` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Actual_Pemasukan` decimal(10,0) NOT NULL,
   PRIMARY KEY (`idActualPemasukan`),
-  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -100,12 +100,12 @@ CREATE TABLE `actual_pemasukan` (
 
 CREATE TABLE `actual_pengeluaran` (
   `idActualPengeluaran` varchar(50) NOT NULL,
-  `idDivisi` varchar(50),
+  `idUser` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Actual_Pengeluaran` decimal(10,0) NOT NULL,
   PRIMARY KEY (`idActualPengeluaran`),
-  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
