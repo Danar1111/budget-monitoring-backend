@@ -3,10 +3,12 @@ const app = express();
 const routes= require('./routes/route');
 const db = require('./config/db'); 
 require('dotenv').config();
+const cronJob = require('./controllers/systemController');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(routes);
+cronJob.createNewMonthlyBudget();
 
 const PORT = process.env.PORT;
 
