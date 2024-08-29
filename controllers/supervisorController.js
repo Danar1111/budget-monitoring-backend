@@ -16,6 +16,8 @@ exports.monthlyCategoryForecastIncome = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
+    const user_id = req.user.id;
+
     const [user] = await db.execute('SELECT * FROM users WHERE users.idUser = ?', [user_id])
     if(user && user.role !== "supervisor"){
         return res.status(403).json({ error: 'true', message: 'You do not have the necessary permissions to perform this action.'});
@@ -53,6 +55,8 @@ exports.monthlyCategoryForecastOutcome = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: errors.array() });
     }
+
+    const user_id = req.user.id;
 
     const [user] = await db.execute('SELECT * FROM users WHERE users.idUser = ?', [user_id])
     if(user && user.role !== "supervisor"){
