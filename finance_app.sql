@@ -57,7 +57,7 @@ CREATE TABLE `forecast_pemasukan` (
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pemasukan` decimal(10,0) NOT NULL,
-  `isApproved` tinyint(1) NOT NULL,
+  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
   PRIMARY KEY (`idForecastPemasukan`),
   FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -73,7 +73,7 @@ CREATE TABLE `forecast_pengeluaran` (
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pengeluaran` decimal(10,0) NOT NULL,
-  `isApproved` tinyint(1) NOT NULL,
+  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
   PRIMARY KEY (`idForecastPengeluaran`),
   FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
