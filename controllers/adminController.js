@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const { validationResult } = require('express-validator');
-const { login } = require('./authController');
 
 exports.getUsers = async (req, res) => {
     const errors = validationResult(req);

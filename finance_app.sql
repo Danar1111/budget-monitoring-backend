@@ -177,11 +177,20 @@ CREATE TABLE `request_item_actual_pengeluaran` (
   `Harga` decimal(10,0) NOT NULL,
   `Sisa_Anggaran_Kategori` decimal(10,0) NOT NULL,
   `isAprroved` BOOLEAN NOT NULL,
-  `Notes` VARCHAR(500)
+  `Notes` VARCHAR(500),
   PRIMARY KEY (`idRequest_Item`),
   FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `divisi` (`idDivisi`, `Nama_Divisi`) VALUES
+('ADMN', 'admin'),
+('FNCE', 'finance');
+
+INSERT INTO `users` (`idUser`, `idDivisi`, `Nama`, `Email`, `Role`, `Password`, `CreatedAt`, `Report_to`) VALUES
+('adm-001', 'ADMN', 'admin-danar', 'danar@admin.com', 'supervisor', 'admin112233', '2024-08-27 06:37:15', NULL),
+('UID-CxFjgTOhQXY=', 'FNCE', 'finance1', 'finance@gmail.com', 'supervisor', '$2a$10$FTaELoPtRsIwkFlB4BeG1u1SmoeFqjr4nTNawhChMk860epFwQgLG', '2024-08-27 10:06:31', NULL),
+('UID-MT0At081vXM=', 'ADMN', 'danar', 'priyambodo02@gmail.com', 'supervisor', '$2a$10$0BISt4YtLcUxj5DUncUf1uhlo2.1XZ9rTEjaIis/PsKvgrxLipU3O', '2024-08-27 06:47:27', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
