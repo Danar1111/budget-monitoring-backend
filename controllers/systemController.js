@@ -1,41 +1,62 @@
 const db = require('../config/db');
-// const cron = require('node-cron');
+const cron = require('node-cron');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { Console } = require('console');
-
-const generatedId = () => {
-    return crypto.randomBytes(3).toString('base64');
-};
 
 function generateRandomString(length) {
     return crypto
         .randomBytes(length)
         .toString('base64')
-        .replace(/[^a-zA-Z0-9]/g, '') // Remove non-URL-safe characters
-        .substring(0, length); // Ensure the string is of the desired length
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, length);
 }
 
-// exports.createNewMonthlyBudget = () => {
-//     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-//     cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
-//         const currentDate = new Date();
-//         const currentMonth = currentDate.getMonth() + 1;
-//         const currentYear = currentDate.getFullYear();
+exports.createNewMonthlyBudget = () => {
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth() + 1;
+        let currentYear = currentDate.getFullYear();
+        currentMonth++;
+        if (currentMonth > 12) {
+            currentMonth =  1;
+            currentYear++;
+        }
         
-//         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
-//         const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
-//         for (let i = 0; i < divisiTotal[0].total; i++) {
-//             let idIn = generatedId();
-//             let idOut = generatedId();
-//             let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
-//             let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idOut;
-//             await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
-//             await db.execute('INSERT INTO forecast_pengeluaran (idForecastPengeluaran, Bulan, Tahun, Total_Forecast_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
-//         }
-//         console.log(`create table for month ${currentMonth} and year ${currentYear} successfull`);
-//     });
-// };
+        const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
+        const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
+        for (let i = 0; i < divisiTotal[0].total; i++) {
+            let idIn = generateRandomString();
+            let idOut = generateRandomString();
+            let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
+            let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idOut;
+            await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
+            await db.execute('INSERT INTO forecast_pengeluaran (idForecastPengeluaran, Bulan, Tahun, Total_Forecast_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
+        }
+        console.log(`create forecast for month ${currentMonth} and year ${currentYear} successfull`);
+    });
+};
+
+exports.createNewMonthlyBudgetActual = () => {
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 1 * *', async () => { // ini untuk setiap tanggal 25
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        
+        const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
+        const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
+        for (let i = 0; i < divisiTotal[0].total; i++) {
+            let idIn = generateRandomString();
+            let idOut = generateRandomString();
+            let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualIn' + '-' + idIn;
+            let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualOut' + '-' + idOut;
+            await db.execute('INSERT INTO actual_pemasukan (idActualPemasukan, Bulan, Tahun, Total_Actual_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
+            await db.execute('INSERT INTO actual_pengeluaran (idActualPengeluaran, Bulan, Tahun, Total_Actual_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
+        }
+        console.log(`create actual value for month ${currentMonth} and year ${currentYear} successfull`);
+    });
+};
 
 exports.emailMonthlyBudget = () => {
     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 

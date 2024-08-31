@@ -6,8 +6,8 @@ function generateRandomString(length) {
     return crypto
         .randomBytes(length)
         .toString('base64')
-        .replace(/[^a-zA-Z0-9]/g, '') // Remove non-URL-safe characters
-        .substring(0, length); // Ensure the string is of the desired length
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, length);
 }
 
 exports.monthlyForecastIncome = async (req, res) => {
