@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(routes);
 cronJob.createNewMonthlyBudget();
+cronJob.createNewMonthlyBudgetActual();
 cronJob.emailMonthlyBudget();
 cronJob.emailReminder();
 
