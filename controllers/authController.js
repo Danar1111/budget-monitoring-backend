@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
             return res.status(200).json({error: true, message: 'not enrolled yet'});
         }
 
-        const token = jwt.sign({ id: user[0].id , divisi: user[0].Nama_Divisi, role: user[0].Role}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user[0].idUser , divisi: user[0].Nama_Divisi, role: user[0].Role}, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.header('Authorization', token).send({
             error: false,
             message: 'Login Successfully',

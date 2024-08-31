@@ -85,12 +85,12 @@ CREATE TABLE `forecast_pengeluaran` (
 
 CREATE TABLE `actual_pemasukan` (
   `idActualPemasukan` varchar(50) NOT NULL,
-  `idUser` varchar(50),
+  `idDivisi` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Actual_Pemasukan` decimal(10,0) NOT NULL,
   PRIMARY KEY (`idActualPemasukan`),
-  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
+  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -100,12 +100,12 @@ CREATE TABLE `actual_pemasukan` (
 
 CREATE TABLE `actual_pengeluaran` (
   `idActualPengeluaran` varchar(50) NOT NULL,
-  `idUser` varchar(50),
+  `idDivisi` varchar(50),
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Actual_Pengeluaran` decimal(10,0) NOT NULL,
   PRIMARY KEY (`idActualPengeluaran`),
-  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
+  FOREIGN KEY (`idDivisi`) REFERENCES `divisi`(`idDivisi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -144,11 +144,13 @@ CREATE TABLE `kategori_forecast_pengeluaran` (
 CREATE TABLE `item_actual_pemasukan` (
   `idItem` varchar(50) NOT NULL,
   `idActualPemasukan` varchar(50),
+  `idUser` varchar(50),
   `Nama_Item` varchar(100) NOT NULL,
   `Harga` decimal(10,0) NOT NULL,
   `idKategori` varchar(50),
   PRIMARY KEY (`idItem`),
   FOREIGN KEY (`idActualPemasukan`) REFERENCES `actual_pemasukan`(`idActualPemasukan`),
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`),
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pemasukan`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -160,26 +162,29 @@ CREATE TABLE `item_actual_pemasukan` (
 CREATE TABLE `item_actual_pengeluaran` (
   `idItem` varchar(50) NOT NULL,
   `idActualPengeluaran` varchar(50),
+  `idUser` varchar(50),
   `idKategori` varchar(50),
   `Nama_Item` varchar(100) NOT NULL,
   `Harga` decimal(10,0) NOT NULL,
   `Sisa_Anggaran_Kategori` decimal(10,0) NOT NULL,
   PRIMARY KEY (`idItem`),
   FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`),
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `request_item_actual_pengeluaran` (
   `idRequest_Item` varchar(50) NOT NULL,
   `idActualPengeluaran` varchar(50),
+  `idUser` varchar(50),
   `idKategori` varchar(50),
   `Nama_Item` varchar(100) NOT NULL,
   `Harga` decimal(10,0) NOT NULL,
-  `Sisa_Anggaran_Kategori` decimal(10,0) NOT NULL,
-  `isAprroved` BOOLEAN NOT NULL,
+  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
   `Notes` VARCHAR(500),
   PRIMARY KEY (`idRequest_Item`),
   FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
+  FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`),
   FOREIGN KEY (`idKategori`) REFERENCES `kategori_forecast_pengeluaran`(`idKategori`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
