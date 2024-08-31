@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(routes);
 // cronJob.createNewMonthlyBudget();
-cronJob.emailMonthlyBudget();
+// cronJob.emailMonthlyBudget();
 
 const PORT = process.env.PORT;
 
