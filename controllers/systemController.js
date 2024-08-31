@@ -23,19 +23,19 @@ function generateRandomString(length) {
 //         const currentMonth = currentDate.getMonth() + 1;
 //         const currentYear = currentDate.getFullYear();
         
-        const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
-        const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
-        for (let i = 0; i < divisiTotal[0].total; i++) {
-            let idIn = generatedId();
-            let idOut = generatedId();
-            let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
-            let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idOut;
-            await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
-            await db.execute('INSERT INTO forecast_pengeluaran (idForecastPengeluaran, Bulan, Tahun, Total_Forecast_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
-        }
-        console.log(`create table for month ${currentMonth} and year ${currentYear} successfull`);
-    });
-};
+//         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
+//         const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
+//         for (let i = 0; i < divisiTotal[0].total; i++) {
+//             let idIn = generatedId();
+//             let idOut = generatedId();
+//             let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
+//             let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idOut;
+//             await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
+//             await db.execute('INSERT INTO forecast_pengeluaran (idForecastPengeluaran, Bulan, Tahun, Total_Forecast_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
+//         }
+//         console.log(`create table for month ${currentMonth} and year ${currentYear} successfull`);
+//     });
+// };
 
 exports.emailMonthlyBudget = () => {
     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
