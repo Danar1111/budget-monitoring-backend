@@ -6,6 +6,7 @@ const { authenticateToken, authorizeRoles, authorizeDivision } = require('../mid
 const adminController = require('../controllers/adminController');
 const supervisorController = require('../controllers/supervisorController');
 const actualController = require('../controllers/actualController');
+const financeController = require('../controllers/financeController');
 
 router.post(
     '/login',
@@ -205,7 +206,7 @@ router.get(
     }
 )
 
-router.update(
+router.put(
     '/request-item-actual-outcome/:iid',
     authenticateToken,
     (req, res, next) => {
@@ -218,6 +219,87 @@ router.delete(
     authenticateToken,
     (req, res, next) => {
         actualController.deleteRequestItemMonthlyActualOutcome(req, res, next);
+    }
+)
+
+router.get(
+    '/forecast-income',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.monthlyActualIncome(req, res, next);
+    }
+)
+
+router.post(
+    '/item-forecast-income',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.itemMonthlyActualIncome(req, res, next);
+    }
+)
+
+router.get(
+    '/item-forecast-income/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.getItemMonthlyActualIncome(req, res, next);
+    }
+)
+
+router.put(
+    '/item-forecast-income/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.updateItemMonthlyActualIncome(req, res, next);
+    }
+)
+
+router.delete(
+    '/item-forecast-income/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.deleteItemMonthlyActualIncome(req, res, next);
+    }
+)
+
+router.get(
+    '/forecast-outcome',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.monthlyActualOutcome(req, res, next);
+    }
+)
+
+router.get(
+    '/item-forecast-outcome/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.getItemMonthlyActualOutcome(req, res, next);
+    }
+)
+
+router.put(
+    '/item-forecast-outcome/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.updateItemMonthlyActualOutcome(req, res, next);
+    }
+)
+
+router.delete(
+    '/item-forecast-outcome/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.deleteItemMonthlyActualOutcome(req, res, next);
     }
 )
 // get dengan uid sebagai parameter harus paling bawah

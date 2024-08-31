@@ -1,6 +1,14 @@
 const db = require('../config/db');
 const { validationResult } = require('express-validator');
 
+function generateRandomString(length) {
+    return crypto
+        .randomBytes(length)
+        .toString('base64')
+        .replace(/[^a-zA-Z0-9]/g, '') // Remove non-URL-safe characters
+        .substring(0, length); // Ensure the string is of the desired length
+}
+
 exports.getMonthlyActualOutcome = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
