@@ -8,10 +8,10 @@ const cronJob = require('./controllers/systemController');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 app.use(routes);
-cronJob.createNewMonthlyBudget();
-cronJob.createNewMonthlyBudgetActual();
-cronJob.emailMonthlyBudget();
-cronJob.emailReminder();
+// cronJob.createNewMonthlyBudget();
+// cronJob.createNewMonthlyBudgetActual();
+// cronJob.emailMonthlyBudget();
+// cronJob.emailReminder();
 
 const PORT = process.env.PORT;
 

@@ -194,7 +194,7 @@ router.get(
     '/actual-outcome/:aid',
     authenticateToken,
     (req, res, next) => {
-        actualController.getMonthlyActualOutcome(req, res, next);
+        actualController.getItemMonthlyActualOutcome(req, res, next);
     }
 )
 
@@ -223,7 +223,7 @@ router.delete(
 )
 
 router.get(
-    '/forecast-income',
+    '/actual-income',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -232,7 +232,7 @@ router.get(
 )
 
 router.post(
-    '/item-forecast-income',
+    '/item-actual-income',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -241,7 +241,7 @@ router.post(
 )
 
 router.get(
-    '/item-forecast-income/:aid',
+    '/item-actual-income/:aid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -250,7 +250,7 @@ router.get(
 )
 
 router.put(
-    '/item-forecast-income/:aid',
+    '/item-actual-income/:iid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -259,7 +259,7 @@ router.put(
 )
 
 router.delete(
-    '/item-forecast-income/:aid',
+    '/item-actual-income/:iid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -268,7 +268,7 @@ router.delete(
 )
 
 router.get(
-    '/forecast-outcome',
+    '/actual-outcome',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -277,7 +277,7 @@ router.get(
 )
 
 router.get(
-    '/item-forecast-outcome/:aid',
+    '/item-actual-outcome/:aid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -286,7 +286,7 @@ router.get(
 )
 
 router.put(
-    '/item-forecast-outcome/:aid',
+    '/item-actual-outcome/:aid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
@@ -295,7 +295,7 @@ router.put(
 )
 
 router.delete(
-    '/item-forecast-outcome/:aid',
+    '/item-actual-outcome/:aid',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
