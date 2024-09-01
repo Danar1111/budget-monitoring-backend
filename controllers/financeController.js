@@ -6,9 +6,24 @@ function generateRandomString(length) {
     return crypto
         .randomBytes(length)
         .toString('base64')
-        .replace(/[^a-zA-Z0-9]/g, '')
-        .substring(0, length);
+        .replace(/[^a-zA-Z0-9]/g, '') // Remove non-URL-safe characters
+        .substring(0, length); // Ensure the string is of the desired length
 }
+
+exports.monthlyActualIncome = async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const income = await db.execute('SELECT * FROM actual_pemasukan');
+
+    res.status(200).send({
+        error: false,
+        message: 'success',
+        data: income,
+    })
+};
 
 exports.itemMonthlyActualIncome = async (req, res) => {
     const errors = validationResult(req);
@@ -97,6 +112,37 @@ exports.deleteItemMonthlyActualIncome = async (req, res) => {
         error: false,
         message: 'success',
     });
+};
+
+exports.getItemMonthlyActualOutcome = async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {aid} = req.params;
+    const [item] = await db.execute('SELECT * FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [aid]);
+
+    res.status(200).send({
+        error: false,
+        message: 'success',
+        data: item
+    });
+};
+
+exports.monthlyActualOutcome = async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const outcome = await db.execute('SELECT * FROM actual_pengeluaran');
+
+    res.status(200).send({
+        error: false,
+        message: 'success',
+        data: outcome,
+    })
 };
 
 exports.updateItemMonthlyActualOutcome = async (req, res) => {
