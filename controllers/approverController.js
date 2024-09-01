@@ -9,7 +9,7 @@ exports.getForecastPemasukan = async (req, res) => {
     }
 
     try {
-        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE');
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan');
         
         res.status(200).send({
             error: false,
