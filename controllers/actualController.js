@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const { validationResult } = require('express-validator');
+const crypto = require('crypto');
 
 function generateRandomString(length) {
     return crypto
@@ -41,8 +42,8 @@ exports.itemMonthlyActualOutcome = async (req, res) => {
     const {idActualPengeluaran, idKategori, Nama_Item, Harga} = req.body;
     const idItem = 'IR-' + generateRandomString(8);
 
-    await db.execute('INSERT INTO request_item_actual_pengeluaran (idItem, idActualPengeluaran, idUser, idKategori, Nama_Item, Harga) VALUES (?,?,?,?,?)',
-        [idItem, user.id, idActualPengeluaran, idKategori, Nama_Item, Harga]
+    await db.execute('INSERT INTO request_item_actual_pengeluaran (idRequest_Item, idActualPengeluaran, idUser, idKategori, Nama_Item, Harga) VALUES (?,?,?,?,?,?)',
+        [idItem, idActualPengeluaran, user.id, idKategori, Nama_Item, Harga]
     );
     
     // await db.execute('UPDATE actual_pengeluaran fp JOIN (SELECT idActualPengeluaran, SUM(harga) AS total_harga FROM item_actual_pengeluaran GROUP BY idActualPengeluaran) kfp ON fp.idActualPengeluaran = kfp.idActualPengeluaran SET fp.Total_Actual_Pengeluaran = kfp.total_harga WHERE fp.idActualPengeluaran = kfp.idActualPengeluaran;')
@@ -103,9 +104,9 @@ exports.updateRequestItemMonthlyActualOutcome = async (req, res) => {
     const {iid} = req.params;
     const {idKategori, Nama_Item, Harga} = req.body;
 
-    const status = await db.execute('SELECT isApproved FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [iid]);
-    if(status !== "waiting"){
-        return res.status(400).send({ message: 'You can not edit this item.'});
+    const [status] = await db.execute('SELECT * FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [iid]);
+    if(status[0].isApproved !== "waiting"){
+        return res.status(400).send({ status: status, message: 'You can not edit this item.'});
     }
 
     await db.execute('UPDATE request_item_actual_pengeluaran SET idKategori = ?, Nama_Item = ?, Harga = ? WHERE idRequest_Item = ?',
@@ -127,9 +128,9 @@ exports.deleteRequestItemMonthlyActualOutcome = async (req, res) => {
 
     const {iid} = req.params;
 
-    const status = await db.execute('SELECT isApproved FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [iid]);
-    if(status !== "waiting"){
-        return res.status(400).send({ message: 'You can not delete this item.'});
+    const [status] = await db.execute('SELECT * FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [iid]);
+    if(status[0].isApproved !== "waiting"){
+        return res.status(400).send({ status: status, message: 'You can not edit this item.'});
     }
 
     await db.execute('DELETE FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [iid]);

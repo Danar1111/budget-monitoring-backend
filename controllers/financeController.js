@@ -16,7 +16,7 @@ exports.monthlyActualIncome = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const income = await db.execute('SELECT * FROM actual_pemasukan');
+    const [income] = await db.execute('SELECT * FROM actual_pemasukan');
 
     res.status(200).send({
         error: false,
@@ -39,7 +39,7 @@ exports.itemMonthlyActualIncome = async (req, res) => {
     const {idActualPemasukan, idKategori, Nama_Item, Harga} = req.body;
     const idItem = 'IR-' + generateRandomString(8);
 
-    await db.execute('INSERT INTO item_actual_pemasukan (idItem, idActualPemasukan, idUser, idKategori, Nama_Item, Harga) VALUES (?,?,?,?,?)',
+    await db.execute('INSERT INTO item_actual_pemasukan (idItem, idActualPemasukan, idUser, idKategori, Nama_Item, Harga) VALUES (?,?,?,?,?,?)',
         [idItem, idActualPemasukan, user.id, idKategori, Nama_Item, Harga]
     );
     
