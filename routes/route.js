@@ -1,6 +1,7 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 const router = express.Router();
+const cors = require('cors');
 const authController = require('../controllers/authController');
 const { authenticateToken, authorizeRoles, authorizeDivision } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
@@ -8,6 +9,11 @@ const supervisorController = require('../controllers/supervisorController');
 const actualController = require('../controllers/actualController');
 const approverController = require('../controllers/approverController');
 const financeController = require('../controllers/financeController');
+
+router.use(cors({
+    origin: '*',
+    method: ["GET","POST","DELETE","PUT"]
+}));
 
 router.post(
     '/login',
