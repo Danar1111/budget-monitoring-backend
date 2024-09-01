@@ -190,7 +190,13 @@ CREATE TABLE `request_item_actual_pengeluaran` (
 
 INSERT INTO `divisi` (`idDivisi`, `Nama_Divisi`) VALUES
 ('ADMN', 'admin'),
-('FNCE', 'finance');
+('FNCE', 'finance'),
+('HRDP', 'human resource'),
+('ITSD', 'IT support'),
+('MFG', 'manufacturing'),
+('MKTM', 'marketing'),
+('PRCH', 'purchasing'),
+('RND', 'research and development');
 
 INSERT INTO `users` (`idUser`, `idDivisi`, `Nama`, `Email`, `Role`, `Password`, `CreatedAt`, `Report_to`) VALUES
 ('adm-001', 'ADMN', 'admin-danar', 'danar@admin.com', 'supervisor', 'admin112233', '2024-08-27 06:37:15', NULL),

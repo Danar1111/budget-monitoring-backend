@@ -6,6 +6,7 @@ const { authenticateToken, authorizeRoles, authorizeDivision } = require('../mid
 const adminController = require('../controllers/adminController');
 const supervisorController = require('../controllers/supervisorController');
 const actualController = require('../controllers/actualController');
+const approverController = require('../controllers/approverController');
 
 router.post(
     '/login',
@@ -205,7 +206,7 @@ router.get(
     }
 )
 
-router.update(
+router.put(
     '/request-item-actual-outcome/:iid',
     authenticateToken,
     (req, res, next) => {
@@ -218,6 +219,64 @@ router.delete(
     authenticateToken,
     (req, res, next) => {
         actualController.deleteRequestItemMonthlyActualOutcome(req, res, next);
+    }
+)
+
+router.get(
+    '/getforecastincome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
+    '/getforecastoutcome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getForecastPengeluaran(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusforecastincome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.approveToForecastPemasukan(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusforecastoutcome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.approveToForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getrequestactual',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    (req, res, next) => {
+        approverController.getActualRequest(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusrequest',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    (req, res, next) => {
+        approverController.approveToActualRequest(req, res, next);
     }
 )
 // get dengan uid sebagai parameter harus paling bawah

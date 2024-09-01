@@ -24,10 +24,9 @@ exports.createNewMonthlyBudget = () => {
         }
         
         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
-        const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
-        for (let i = 0; i < divisiTotal[0].total; i++) {
-            let idIn = generateRandomString();
-            let idOut = generateRandomString();
+        for (let i = 0; i < divisi.length; i++) {
+            let idIn = generateRandomString(5);
+            let idOut = generateRandomString(5);
             let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
             let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idOut;
             await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
@@ -45,10 +44,9 @@ exports.createNewMonthlyBudgetActual = () => {
         const currentYear = currentDate.getFullYear();
         
         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
-        const [divisiTotal] = await db.execute('SELECT COUNT(*) AS total FROM divisi WHERE idDivisi != "ADMN"');
-        for (let i = 0; i < divisiTotal[0].total; i++) {
-            let idIn = generateRandomString();
-            let idOut = generateRandomString();
+        for (let i = 0; i < divisi.length; i++) {
+            let idIn = generateRandomString(5);
+            let idOut = generateRandomString(5);
             let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualIn' + '-' + idIn;
             let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualOut' + '-' + idOut;
             await db.execute('INSERT INTO actual_pemasukan (idActualPemasukan, Bulan, Tahun, Total_Actual_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
@@ -105,8 +103,8 @@ exports.emailMonthlyBudget = () => {
 };
 
 exports.emailReminder = () => {
-    cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-    // cron.schedule('0 0 1 * *', async () => { // ini untuk setiap tanggal 25
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 1 * *', async () => { // ini untuk setiap tanggal 25
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
             port: 465,
@@ -122,7 +120,8 @@ exports.emailReminder = () => {
             const divisiUnsubmit = new Array;
             for (let i = 0; i < divisi.length; i++) {
                 const [unsubmitIn] = await db.execute('SELECT * FROM forecast_pemasukan WHERE idUser IS NULL AND idForecastPemasukan LIKE ?', [`${divisi[i].idDivisi}%`]);
-                if (unsubmitIn.length > 0) {
+                const [unsubmitOut] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE idUser IS NULL AND idForecastPengeluaran LIKE ?', [`${divisi[i].idDivisi}%`]);
+                if (unsubmitIn.length > 0 || unsubmitOut.length > 0) {
                     divisiUnsubmit.push(divisi[i].idDivisi);
                 }
             }
@@ -143,25 +142,25 @@ exports.emailReminder = () => {
 
             // console.log(spv);
 
-            // for (let i = 0; i < spv.length; i++) {
-            //     const sendMail = async () => {
-            //         try {
-            //             const info = await transporter.sendMail({
-            //                 from: process.env.EMAIL_FROM,
-            //                 to: spv[i].Email,
-            //                 subject: `Hello ${spv[i].Nama}, Quickly submit a forecast!`,
-            //                 text: `Dear ${spv[i].Nama},\n\nThis is a reminder that you have not submitted your monthly forecast until today.\n\nBest regards,\nYour Team`,
-            //                 // html: `<p>Dear ${spv[i].Nama},</p><p>This is a reminder that you have not submitted your monthly forecast until today.</p><p>Best regards,<br>Your Team</p>` // Jika menggunakan format HTML
-            //             });
+            for (let j = 0; j < spv.length; j++) {
+                const sendMail = async () => {
+                    try {
+                        const info = await transporter.sendMail({
+                            from: process.env.EMAIL_FROM,
+                            to: spv[j].Email,
+                            subject: `Hello ${spv[j].Nama}, Quickly submit a forecast!`,
+                            text: `Dear ${spv[j].Nama},\n\nThis is a reminder that you have not submitted your monthly forecast until today.\n\nBest regards,\nYour Team`,
+                            // html: `<p>Dear ${spv[j].Nama},</p><p>This is a reminder that you have not submitted your monthly forecast until today.</p><p>Best regards,<br>Your Team</p>` // Jika menggunakan format HTML
+                        });
                         
-            //             console.log(`Email sent to ${spv[i].Nama}:`, info.response);
-            //         } catch (error) {
-            //             console.error(`Error sending email to ${spv[i].Nama}:`, error);
-            //         }
-            //     };
+                        console.log(`Email sent to ${spv[j].Nama}:`, info.response);
+                    } catch (error) {
+                        console.error(`Error sending email to ${spv[j].Nama}:`, error);
+                    }
+                };
                 
-            //     // await sendMail();
-            // }
+                await sendMail();
+            }
         } catch (err) {
             console.error('Error fetching supervisors from database:', err);
         }
