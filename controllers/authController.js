@@ -60,7 +60,11 @@ exports.login = async (req, res) => {
 };
 
 const generatedId = () => {
-    return 'UID-' + crypto.randomBytes(8).toString('base64');
+    return crypto
+        .randomBytes(8)
+        .toString('base64')
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, 8);
 };
 
 exports.register = async (req, res) => {
