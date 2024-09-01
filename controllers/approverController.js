@@ -8,11 +8,8 @@ exports.getForecastPemasukan = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const currentDate = new Date();
-    let currentYear = currentDate.getFullYear();
-
     try {
-        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE Tahun = ?', [currentYear]);
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE');
         
         res.status(200).send({
             error: false,
@@ -31,11 +28,8 @@ exports.getForecastPengeluaran = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const currentDate = new Date();
-    let currentYear = currentDate.getFullYear();
-
     try {
-        const [data] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE Tahun = ?', [currentYear]);
+        const [data] = await db.execute('SELECT * FROM forecast_pengeluaran');
         
         res.status(200).send({
             error: false,
