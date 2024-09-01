@@ -1,12 +1,19 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 const router = express.Router();
+const cors = require('cors');
 const authController = require('../controllers/authController');
 const { authenticateToken, authorizeRoles, authorizeDivision } = require('../middlewares/authMiddleware');
 const adminController = require('../controllers/adminController');
 const supervisorController = require('../controllers/supervisorController');
 const actualController = require('../controllers/actualController');
+const approverController = require('../controllers/approverController');
 const financeController = require('../controllers/financeController');
+
+router.use(cors({
+    origin: '*',
+    method: ["GET","POST","DELETE","PUT"]
+}));
 
 router.post(
     '/login',
@@ -223,7 +230,65 @@ router.delete(
 )
 
 router.get(
-    '/actual-income',
+    '/getforecastincome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
+    '/getforecastoutcome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getForecastPengeluaran(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusforecastincome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.approveToForecastPemasukan(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusforecastoutcome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.approveToForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getrequestactual',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    (req, res, next) => {
+        approverController.getActualRequest(req, res, next);
+    }
+)
+
+router.post(
+    '/setstatusrequest',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    (req, res, next) => {
+        approverController.approveToActualRequest(req, res, next);
+    }
+)
+
+router.get(
+    '/forecast-income',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
