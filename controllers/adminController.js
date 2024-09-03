@@ -62,6 +62,7 @@ exports.getDetailUser = async (req, res) => {
                 report_to: report_to_fix,
                 report_to_id: report_to_id_fix,
                 divisi: user[0].Nama_Divisi,
+                id_divisi: user[0].idDivisi,
                 dateTimeRegistered: user[0].CreateAt
             },
         });
