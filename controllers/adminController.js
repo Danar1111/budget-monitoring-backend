@@ -82,7 +82,7 @@ exports.enrollUsers = async (req, res) => {
     const { role , idDivisi} = req.body;
     let { report_to } =req.body;
 
-    if (!report_to === 'null') {
+    if (!report_to || report_to === 'null') {
         report_to = null;
     }
 
