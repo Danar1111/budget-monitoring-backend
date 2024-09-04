@@ -240,12 +240,32 @@ router.get(
 )
 
 router.get(
+    '/getdetailforecastincome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getDetailForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
     '/getforecastoutcome',
     authenticateToken,
     authorizeRoles('supervisor'),
     authorizeDivision('finance'),
     (req, res, next) => {
         approverController.getForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getdetailforecastoutcome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getDetailForecastPengeluaran(req, res, next);
     }
 )
 
