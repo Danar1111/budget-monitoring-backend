@@ -250,6 +250,16 @@ router.get(
 )
 
 router.get(
+    '/getkategoriforecastincome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getKategoriForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
     '/getforecastoutcome',
     authenticateToken,
     authorizeRoles('supervisor'),
@@ -266,6 +276,16 @@ router.get(
     authorizeDivision('finance'),
     (req, res, next) => {
         approverController.getDetailForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getkategoriforecastoutcome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getKategoriForecastPengeluaran(req, res, next);
     }
 )
 

@@ -24,7 +24,7 @@ exports.getForecastPemasukan = async (req, res) => {
 exports.getDetailForecastPemasukan = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ error: errors.array() })
+        return res.status(400).json({ error: errors.array() });
     }
 
     const {id} = req.params;
@@ -36,7 +36,29 @@ exports.getDetailForecastPemasukan = async (req, res) => {
             error: false,
             message: 'Data fetched successfully',
             data: data
-        })
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'})
+    }
+};
+
+exports.getKategoriForecastPemasukan = async (req, res) => {;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM kategori_forecast_pemasukan WHERE idForecastPemasukan = ?', [id]);
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).send({ error: true, message: 'Server error'})
@@ -74,6 +96,29 @@ exports.getDetailForecastPengeluaran = async (req, res) => {
     try {
         const [data] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE idForecastPengeluaran = ?', [id]);
         
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'})
+    }
+};
+
+
+exports.getKategoriForecastPengeluaran = async (req, res) => {;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM kategori_forecast_pengeluaran WHERE idForecastPengeluaran = ?', [id]);
+
         res.status(200).send({
             error: false,
             message: 'Data fetched successfully',
