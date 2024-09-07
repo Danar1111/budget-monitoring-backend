@@ -1,6 +1,14 @@
 const db = require('../config/db');
 const { validationResult } = require('express-validator');
 
+function generateRandomString(length) {
+    return crypto
+        .randomBytes(length)
+        .toString('base64')
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, length);
+};
+
 exports.getForecastPemasukan = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -143,8 +151,19 @@ exports.approveToForecastPemasukan = async (req, res ) => {
     }
     const approvedBy = req.user.id;
 
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
     try {
+        const [divisi] = await db.execute('SELECT u.idDivisi FROM forecast_pemasukan f LEFT JOIN users u on f.idUser = u.idUser WHERE idForecastPemasukan = ?', [id]);
         await db.execute('UPDATE forecast_pemasukan SET isApproved = ?, timeApproved = NOW(), approvedBy = ?, notes = ? WHERE idForecastPemasukan = ?', [status, approvedBy, notes, id]);
+
+        if (status === 'rejected') {
+            let idIn = generateRandomString(5);
+            let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualIn' + '-' + idIn;
+            await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
+        }
 
         res.status(200).send({
             error: false,
