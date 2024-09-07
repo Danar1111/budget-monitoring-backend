@@ -1,6 +1,14 @@
 const db = require('../config/db');
 const { validationResult } = require('express-validator');
-const crypto = require('crypto')
+const crypto = require('crypto');
+
+function generateRandomString(length) {
+    return crypto
+        .randomBytes(length)
+        .toString('base64')
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, length);
+};
 
 exports.getForecastPemasukan = async (req, res) => {
     const errors = validationResult(req);
@@ -9,8 +17,72 @@ exports.getForecastPemasukan = async (req, res) => {
     }
 
     try {
-        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE');
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE isApproved = "waiting"');
         
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'});
+    }
+};
+
+exports.getAllForecastPemasukan = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan');
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error during fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'});
+    }
+};
+
+exports.getDetailForecastPemasukan = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE idForecastPemasukan = ?', [id]);
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'})
+    }
+};
+
+exports.getKategoriForecastPemasukan = async (req, res) => {;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM kategori_forecast_pemasukan WHERE idForecastPemasukan = ?', [id]);
+
         res.status(200).send({
             error: false,
             message: 'Data fetched successfully',
@@ -23,6 +95,26 @@ exports.getForecastPemasukan = async (req, res) => {
 };
 
 exports.getForecastPengeluaran = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE isApproved = "waiting"');
+        
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'});
+    }
+};
+
+exports.getAllForecastPengeluaran = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: errors.array() });
@@ -42,6 +134,51 @@ exports.getForecastPengeluaran = async (req, res) => {
     }
 };
 
+exports.getDetailForecastPengeluaran = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE idForecastPengeluaran = ?', [id]);
+        
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'})
+    }
+};
+
+
+exports.getKategoriForecastPengeluaran = async (req, res) => {;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {id} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM kategori_forecast_pengeluaran WHERE idForecastPengeluaran = ?', [id]);
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'})
+    }
+};
+
 exports.approveToForecastPemasukan = async (req, res ) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -49,9 +186,25 @@ exports.approveToForecastPemasukan = async (req, res ) => {
     }
 
     const { id, status } = req.body;
+    let { notes } = req.body;
+    if (!notes) {
+        notes = 'tidak ada catatan';
+    }
+    const approvedBy = req.user.id;
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
 
     try {
-        await db.execute('UPDATE forecast_pemasukan SET isApproved = ? WHERE idForecastPemasukan = ?', [status, id]);
+        const [divisi] = await db.execute('SELECT u.idDivisi FROM forecast_pemasukan f LEFT JOIN users u on f.idUser = u.idUser WHERE idForecastPemasukan = ?', [id]);
+        await db.execute('UPDATE forecast_pemasukan SET isApproved = ?, timeApproved = NOW(), approvedBy = ?, notes = ? WHERE idForecastPemasukan = ?', [status, approvedBy, notes, id]);
+
+        if (status === 'rejected') {
+            let idIn = generateRandomString(5);
+            let tableNameIn = divisi[0].idDivisi + '-' + currentMonth + '-' + currentYear + '-in' + '-' + idIn;
+            await db.execute('INSERT INTO forecast_pemasukan (idForecastPemasukan, Bulan, Tahun, Total_Forecast_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
+        }
 
         res.status(200).send({
             error: false,
@@ -70,9 +223,25 @@ exports.approveToForecastPengeluaran = async (req, res) => {
     }
 
     const { id, status } = req.body;
+    let { notes } = req.body;
+    if (!notes) {
+        notes = 'tidak ada catatan';
+    }
+    const approvedBy = req.user.id;
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
 
     try {
-        await db.execute('UPDATE forecast_pengeluaran SET isApproved = ? WHERE idForecastPengeluaran = ?', [status, id]);
+        const [divisi] = await db.execute('SELECT u.idDivisi FROM forecast_pengeluaran f LEFT JOIN users u on f.idUser = u.idUser WHERE idForecastPengeluaran = ?', [id]);
+        await db.execute('UPDATE forecast_pengeluaran SET isApproved = ?, timeApproved = NOW(), approvedBy = ?, notes = ? WHERE idForecastPengeluaran = ?', [status, approvedBy, notes, id]);
+
+        if (status === 'rejected') {
+            let idIn = generateRandomString(5);
+            let tableNameOut = divisi[0].idDivisi + '-' + currentMonth + '-' + currentYear + '-out' + '-' + idIn;
+            await db.execute('INSERT INTO forecast_pengeluaran (idForecastPengeluaran, Bulan, Tahun, Total_Forecast_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
+        }
 
         res.status(200).send({
             error: false,
@@ -114,7 +283,12 @@ exports.approveToActualRequest = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const { id, status, notes } = req.body;
+    const { id, status } = req.body;
+    let { notes } = req.body;
+    if (!notes) {
+        notes = 'tidak ada catatan';
+    }
+    const approvedBy = req.user.id;
 
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
@@ -122,7 +296,7 @@ exports.approveToActualRequest = async (req, res) => {
     
     try {
         if (status === 'approved') {
-            await db.execute('UPDATE request_item_actual_pengeluaran SET isApproved = ?, Notes = ? WHERE idRequest_item = ?',[status, notes, id]);
+            await db.execute('UPDATE request_item_actual_pengeluaran SET isApproved = ?, timeApproved = NOW(), approvedBy = ?, notes = ? WHERE idRequest_item = ?',[status, approvedBy, notes, id]);
             const [id_request] = await db.execute('SELECT k.idKategori AS idKategori, k.Harga AS Harga_f, r.Harga AS Harga_a, r.idUser AS idUser, r.Nama_Item AS Nama_Item FROM request_item_actual_pengeluaran r JOIN kategori_forecast_pengeluaran k ON r.idKategori = k.idKategori WHERE idRequest_item = ?', [id]);
 
             const [divisi] = await db.execute('SELECT Nama, idDivisi from users WHERE idUser = ?',[id_request[0].idUser]);
@@ -165,8 +339,16 @@ exports.approveToActualRequest = async (req, res) => {
 
             });
         } else if (status === 'rejected') {
-            await db.execute('UPDATE request_item_actual_pengeluaran SET isApproved = ?, Notes = ? WHERE idRequest_item = ?',[status, notes, id]);
+            await db.execute('UPDATE request_item_actual_pengeluaran SET isApproved = ?, timeApproved = NOW(), approvedBy = ?, notes = ? WHERE idRequest_item = ?',[status, approvedBy, notes, id]);
             const [data] = await db.execute('SELECT * FROM item_actual_pengeluaran WHERE idItem = ?', [id]);
+
+            if (data.length <= 0) {
+                return res.status(200).json({
+                    error: false,
+                    message: 'Update notes succes',
+                })
+            }
+
             const [actual] = await db.execute('SELECT * FROM actual_pengeluaran WHERE idActualPengeluaran = ?', [data[0].idActualPengeluaran]);
             if (data.length > 0) {
                 await db.execute('DELETE FROM item_actual_pengeluaran WHERE idItem = ?', [id]);

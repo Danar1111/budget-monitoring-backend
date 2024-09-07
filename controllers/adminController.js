@@ -44,9 +44,11 @@ exports.getDetailUser = async (req, res) => {
         const [user] = await db.execute('SELECT * FROM users LEFT JOIN divisi on users.idDivisi = divisi.idDivisi WHERE idUser = ?', [uid]);
         let report = null;
         let report_to_fix = null;
+        let report_to_id_fix = null;
         if (user[0].Report_to) {
-            report = await db.execute('SELECT Nama FROM users WHERE idUser = ?', [user[0].Report_to]);
+            report = await db.execute('SELECT idUser, Nama FROM users WHERE idUser = ?', [user[0].Report_to]);
             report_to_fix = report[0][0].Nama;
+            report_to_id_fix = report[0][0].idUser;
         }
 
         res.status(200).send({
@@ -58,7 +60,9 @@ exports.getDetailUser = async (req, res) => {
                 email: user[0].Email,
                 role: user[0].Role,
                 report_to: report_to_fix,
+                report_to_id: report_to_id_fix,
                 divisi: user[0].Nama_Divisi,
+                id_divisi: user[0].idDivisi,
                 dateTimeRegistered: user[0].CreateAt
             },
         });
@@ -78,7 +82,7 @@ exports.enrollUsers = async (req, res) => {
     const { role , idDivisi} = req.body;
     let { report_to } =req.body;
 
-    if (!report_to) {
+    if (!report_to || report_to === 'null') {
         report_to = null;
     }
 

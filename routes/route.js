@@ -240,12 +240,72 @@ router.get(
 )
 
 router.get(
+    '/getallforecastincome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getAllForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
+    '/getdetailforecastincome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getDetailForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
+    '/getkategoriforecastincome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getKategoriForecastPemasukan(req, res, next);
+    }
+)
+
+router.get(
     '/getforecastoutcome',
     authenticateToken,
     authorizeRoles('supervisor'),
     authorizeDivision('finance'),
     (req, res, next) => {
         approverController.getForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getallforecastoutcome',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getAllForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getdetailforecastoutcome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getDetailForecastPengeluaran(req, res, next);
+    }
+)
+
+router.get(
+    '/getkategoriforecastoutcome/:id',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        approverController.getKategoriForecastPengeluaran(req, res, next);
     }
 )
 

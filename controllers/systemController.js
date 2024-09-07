@@ -125,18 +125,17 @@ exports.emailReminder = () => {
                     divisiUnsubmit.push(divisi[i].idDivisi);
                 }
             }
-            console.log(divisiUnsubmit);
+            // console.log(divisiUnsubmit);
             
-//             const spv = new Array;
-//             for (let j = 0; j < divisiUnsubmit.length; j++) {
-//                 const [temp] = await db.execute('SELECT Nama, Email FROM users WHERE Role = "supervisor" AND idDivisi = ?',[divisiUnsubmit[j]]);
-//                 if (temp.length > 0) {
-//                     spv.push(temp[0]);
-//                 }
-//             }
-//             console.log(spv);
+            const spv = new Array;
+            for (let j = 0; j < divisiUnsubmit.length; j++) {
+                const [temp] = await db.execute('SELECT Nama, Email FROM users WHERE Role = "supervisor" AND idDivisi = ?',[divisiUnsubmit[j]]);
+                if (temp.length > 0) {
+                    spv.push(temp[0]);
+                }
+            }
+            // console.log(spv);
             
-
 //             // const optionalEmail = ({Nama: 'dafarel', Email:'dacukucay@gmail.com'}); // untuk testing, masukkan email yang ingin menerima pesan
 //             // spv.push(optionalEmail);
 
