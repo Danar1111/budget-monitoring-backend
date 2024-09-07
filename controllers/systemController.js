@@ -1,7 +1,7 @@
 const db = require('../config/db');
-// const cron = require('node-cron');
+const cron = require('node-cron');
 const crypto = require('crypto');
-// const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 
 function generateRandomString(length) {
     return crypto
@@ -11,17 +11,17 @@ function generateRandomString(length) {
         .substring(0, length);
 }
 
-// exports.createNewMonthlyBudget = () => {
-//     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-//     cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
-//         const currentDate = new Date();
-//         let currentMonth = currentDate.getMonth() + 1;
-//         let currentYear = currentDate.getFullYear();
-//         currentMonth++;
-//         if (currentMonth > 12) {
-//             currentMonth =  1;
-//             currentYear++;
-//         }
+exports.createNewMonthlyBudget = () => {
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
+        const currentDate = new Date();
+        let currentMonth = currentDate.getMonth() + 1;
+        let currentYear = currentDate.getFullYear();
+        currentMonth++;
+        if (currentMonth > 12) {
+            currentMonth =  1;
+            currentYear++;
+        }
         
         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
         for (let i = 0; i < divisi.length; i++) {
@@ -36,12 +36,12 @@ function generateRandomString(length) {
     });
 };
 
-// exports.createNewMonthlyBudgetActual = () => {
-//     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-//     cron.schedule('0 0 1 * *', async () => { // ini untuk setiap tanggal 25
-//         const currentDate = new Date();
-//         const currentMonth = currentDate.getMonth() + 1;
-//         const currentYear = currentDate.getFullYear();
+exports.createNewMonthlyBudgetActual = () => {
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 1 * *', async () => { // ini untuk setiap tanggal 25
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
         
         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
         for (let i = 0; i < divisi.length; i++) {
@@ -56,51 +56,51 @@ function generateRandomString(length) {
     });
 };
 
-// exports.emailMonthlyBudget = () => {
-//     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-//     cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
-//         const transporter = nodemailer.createTransport({
-//             host: process.env.EMAIL_HOST,
-//             port: 465,
-//             secure: true,
-//             auth: {
-//                 user: process.env.EMAIL_USER,
-//                 pass: process.env.EMAIL_PASSWORD
-//             }
-//         });
+exports.emailMonthlyBudget = () => {
+    // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
+    cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
+        const transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
 
-//         try {
-//             const [spv] = await db.execute('SELECT Nama, Email FROM users WHERE Role = "supervisor"');
+        try {
+            const [spv] = await db.execute('SELECT Nama, Email FROM users WHERE Role = "supervisor"');
 
-//             // const optionalEmail = ({Nama: 'dafarel', Email:'dacukucay@gmail.com'}); // untuk testing, masukkan email yang ingin menerima pesan
-//             // spv.push(optionalEmail);
+            // const optionalEmail = ({Nama: 'dafarel', Email:'dacukucay@gmail.com'}); // untuk testing, masukkan email yang ingin menerima pesan
+            // spv.push(optionalEmail);
 
-//             // console.log(spv);
+            // console.log(spv);
 
-//             for (let i = 0; i < spv.length; i++) {
-//                 const sendMail = async () => {
-//                     try {
-//                         const info = await transporter.sendMail({
-//                             from: process.env.EMAIL_FROM,
-//                             to: spv[i].Email,
-//                             subject: `Hello ${spv[i].Nama}, Reminder for forecast submission`,
-//                             text: `Dear ${spv[i].Nama},\n\nThis is a reminder to submit your monthly forecast.\n\nBest regards,\nYour Team`,
-//                             // html: `<p>Dear ${spv[i].Nama},</p><p>This is a reminder to submit your monthly forecast.</p><p>Best regards,<br>Your Team</p>` // Jika menggunakan format HTML
-//                         });
+            for (let i = 0; i < spv.length; i++) {
+                const sendMail = async () => {
+                    try {
+                        const info = await transporter.sendMail({
+                            from: process.env.EMAIL_FROM,
+                            to: spv[i].Email,
+                            subject: `Hello ${spv[i].Nama}, Reminder for forecast submission`,
+                            text: `Dear ${spv[i].Nama},\n\nThis is a reminder to submit your monthly forecast.\n\nBest regards,\nYour Team`,
+                            // html: `<p>Dear ${spv[i].Nama},</p><p>This is a reminder to submit your monthly forecast.</p><p>Best regards,<br>Your Team</p>` // Jika menggunakan format HTML
+                        });
                         
-//                         console.log(`Email sent to ${spv[i].Nama}:`, info.response);
-//                     } catch (error) {
-//                         console.error(`Error sending email to ${spv[i].Nama}:`, error);
-//                     }
-//                 };
+                        console.log(`Email sent to ${spv[i].Nama}:`, info.response);
+                    } catch (error) {
+                        console.error(`Error sending email to ${spv[i].Nama}:`, error);
+                    }
+                };
                 
-//                 await sendMail();
-//             }
-//         } catch (err) {
-//             console.error('Error fetching supervisors from database:', err);
-//         }
-//     });
-// };
+                await sendMail();
+            }
+        } catch (err) {
+            console.error('Error fetching supervisors from database:', err);
+        }
+    });
+};
 
 exports.emailReminder = () => {
     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 

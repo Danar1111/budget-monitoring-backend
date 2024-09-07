@@ -18,8 +18,8 @@ exports.monthlyForecastIncome = async (req, res) => {
 
     const user_id = req.user.id;
     const {fid} = req.params
-
-    await db.execute('UPDATE forecast_pemasukan SET idUser = ? WHERE idForecastPemasukan = ?', [user_id, fid]);
+    const status = 'waiting';
+    await db.execute('UPDATE forecast_pemasukan SET idUser = ?, isApproved = ? WHERE idForecastPemasukan = ?', [user_id, status, fid]);
 
     res.status(200).send({
         error: false,
@@ -145,8 +145,9 @@ exports.monthlyForecastOutcome = async (req, res) => {
 
     const user_id = req.user.id;
     const {fid} = req.params
+    const status = 'waiting';
 
-    await db.execute('UPDATE forecast_pengeluaran SET idUser = ? WHERE idForecastPengeluaran = ?', [user_id, fid]);
+    await db.execute('UPDATE forecast_pengeluaran SET idUser = ?, isApproved = ? WHERE idForecastPengeluaran = ?', [user_id, status, fid]);
 
     res.status(200).send({
         error: false,
@@ -216,7 +217,7 @@ exports.getMonthlyCategoryForecastOutcome = async (req, res) => {
 
     const {fid} = req.params;
 
-    const kategori = await db.execute('SELECT * FROM kategori_forecast_pengeluaran WHERE idForecastPengeluaran = ?', [fid]);
+    const [kategori] = await db.execute('SELECT * FROM kategori_forecast_pengeluaran WHERE idForecastPengeluaran = ?', [fid]);
 
     res.status(200).send({
         error: false,

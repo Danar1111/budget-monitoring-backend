@@ -41,9 +41,10 @@ exports.itemMonthlyActualOutcome = async (req, res) => {
     const user = req.user;
     const {idActualPengeluaran, idKategori, Nama_Item, Harga} = req.body;
     const idItem = 'IR-' + generateRandomString(8);
+    const isApproved = 'waiting'
 
-    await db.execute('INSERT INTO request_item_actual_pengeluaran (idRequest_Item, idActualPengeluaran, idUser, idKategori, Nama_Item, Harga) VALUES (?,?,?,?,?,?)',
-        [idItem, idActualPengeluaran, user.id, idKategori, Nama_Item, Harga]
+    await db.execute('INSERT INTO request_item_actual_pengeluaran (idRequest_Item, idActualPengeluaran, idUser, idKategori, Nama_Item, Harga, isApproved) VALUES (?,?,?,?,?,?,?)',
+        [idItem, idActualPengeluaran, user.id, idKategori, Nama_Item, Harga, isApproved]
     );
     
     // await db.execute('UPDATE actual_pengeluaran fp JOIN (SELECT idActualPengeluaran, SUM(harga) AS total_harga FROM item_actual_pengeluaran GROUP BY idActualPengeluaran) kfp ON fp.idActualPengeluaran = kfp.idActualPengeluaran SET fp.Total_Actual_Pengeluaran = kfp.total_harga WHERE fp.idActualPengeluaran = kfp.idActualPengeluaran;')

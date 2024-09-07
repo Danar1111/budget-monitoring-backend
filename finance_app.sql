@@ -57,7 +57,7 @@ CREATE TABLE `forecast_pemasukan` (
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pemasukan` decimal(10,0) NOT NULL,
-  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
+  `isApproved` ENUM('approved', 'rejected', 'waiting', 'not submitted') NOT NULL DEFAULT 'waiting',
   PRIMARY KEY (`idForecastPemasukan`),
   FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -73,7 +73,7 @@ CREATE TABLE `forecast_pengeluaran` (
   `Bulan` int(11) NOT NULL,
   `Tahun` int(11) NOT NULL,
   `Total_Forecast_Pengeluaran` decimal(10,0) NOT NULL,
-  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
+  `isApproved` ENUM('approved', 'rejected', 'waiting', 'not submitted') NOT NULL DEFAULT 'waiting',
   PRIMARY KEY (`idForecastPengeluaran`),
   FOREIGN KEY (`idUser`) REFERENCES `users`(`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -180,7 +180,7 @@ CREATE TABLE `request_item_actual_pengeluaran` (
   `idKategori` varchar(50),
   `Nama_Item` varchar(100) NOT NULL,
   `Harga` decimal(10,0) NOT NULL,
-  `isApproved` ENUM('approved', 'rejected', 'waiting') NOT NULL DEFAULT 'waiting',
+  `isApproved` ENUM('approved', 'rejected', 'waiting', 'not submitted') NOT NULL DEFAULT 'waiting',
   `Notes` VARCHAR(500),
   PRIMARY KEY (`idRequest_Item`),
   FOREIGN KEY (`idActualPengeluaran`) REFERENCES `actual_pengeluaran`(`idActualPengeluaran`),
