@@ -17,7 +17,7 @@ exports.getForecastPemasukan = async (req, res) => {
     }
 
     try {
-        const [data] = await db.execute('SELECT * FROM forecast_pemasukan');
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan WHERE isApproved = "waiting"');
         
         res.status(200).send({
             error: false,
@@ -26,7 +26,27 @@ exports.getForecastPemasukan = async (req, res) => {
         });
     } catch (err) {
         console.error('Error fetching data:', err);
-        res.status(500).send({ error: true, message: 'Server error'})
+        res.status(500).send({ error: true, message: 'Server error'});
+    }
+};
+
+exports.getAllForecastPemasukan = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pemasukan');
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error during fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'});
     }
 };
 
@@ -75,6 +95,26 @@ exports.getKategoriForecastPemasukan = async (req, res) => {;
 };
 
 exports.getForecastPengeluaran = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    try {
+        const [data] = await db.execute('SELECT * FROM forecast_pengeluaran WHERE isApproved = "waiting"');
+        
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).send({ error: true, message: 'Server error'});
+    }
+};
+
+exports.getAllForecastPengeluaran = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: errors.array() });
