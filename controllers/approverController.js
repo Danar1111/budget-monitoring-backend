@@ -326,9 +326,9 @@ exports.approveToActualRequest = async (req, res) => {
 
             const [actual_outcome] = await db.execute('SELECT * FROM actual_pengeluaran WHERE idDivisi = ? AND Bulan = ? AND Tahun = ?', [divisi[0].idDivisi, currentMonth, currentYear]);
 
-            const total_outcome = Number(actual_outcome[0].Total_Actual_Pengeluaran) + Number(id_request[0].Harga_a);
+            const [total_outcome] = await db.execute('SELECT SUM(Harga) as total FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [actual_outcome[0].idActualPengeluaran]);
 
-            await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idDivisi = ? AND Bulan = ? AND Tahun = ?', [total_outcome, divisi[0].idDivisi, currentMonth, currentYear]);
+            await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idDivisi = ? AND Bulan = ? AND Tahun = ?', [total_outcome[0].total, divisi[0].idDivisi, currentMonth, currentYear]);
             
             const sisa = id_request[0].Harga_f - id_request[0].Harga_a;
 
@@ -345,7 +345,7 @@ exports.approveToActualRequest = async (req, res) => {
                 message: 'Update status success',
                 warning: warn,
                 testActual: {
-                    total_outcome: total_outcome,
+                    total_outcome: total_outcome[0].total,
                     divisi: divisi[0].idDivisi,
                     currentMonth,
                     currentYear
@@ -376,9 +376,9 @@ exports.approveToActualRequest = async (req, res) => {
             if (data.length > 0) {
                 await db.execute('DELETE FROM item_actual_pengeluaran WHERE idItem = ?', [id]);
 
-                const count = Number(actual[0].Total_Actual_Pengeluaran) - Number(data[0].Harga);
+                const [count] = await db.execute('SELECT SUM(Harga) as total FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [data[0].idActualPengeluaran]);
                 
-                await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idActualPengeluaran = ?', [count, data[0].idActualPengeluaran]);
+                await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idActualPengeluaran = ?', [count[0].total, data[0].idActualPengeluaran]);
             }
 
             res.status(200).send({
