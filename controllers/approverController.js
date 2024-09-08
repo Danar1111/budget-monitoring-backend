@@ -372,7 +372,6 @@ exports.approveToActualRequest = async (req, res) => {
                 })
             }
 
-            const [actual] = await db.execute('SELECT * FROM actual_pengeluaran WHERE idActualPengeluaran = ?', [data[0].idActualPengeluaran]);
             if (data.length > 0) {
                 await db.execute('DELETE FROM item_actual_pengeluaran WHERE idItem = ?', [id]);
 
