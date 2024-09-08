@@ -330,7 +330,7 @@ router.post(
 )
 
 router.get(
-    '/getrequestactual',
+    '/getrequestactual/:aid',
     authenticateToken,
     authorizeRoles('supervisor'),
     (req, res, next) => {
@@ -425,6 +425,15 @@ router.delete(
     authorizeDivision('finance'),
     (req, res, next) => {
         financeController.deleteItemMonthlyActualOutcome(req, res, next);
+    }
+)
+
+router.get(
+    '/get-all-category-income/:aid',
+    authenticateToken,
+    authorizeDivision('finance'),
+    (req, res, next) => {
+        financeController.getAllCategory(req, res, next);
     }
 )
 // get dengan uid sebagai parameter harus paling bawah

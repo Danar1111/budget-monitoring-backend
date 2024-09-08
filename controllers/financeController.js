@@ -184,3 +184,26 @@ exports.deleteItemMonthlyActualOutcome = async (req, res) => {
         message: 'success',
     });
 };
+
+exports.getAllCategory = async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json({ error: errors.array() });
+    }
+
+    const {aid} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM kategori_forecast_pemasukan WHERE idForecastPemasukan = ?', [aid]);
+        
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+
+    } catch (err) {
+        console.error('error duruing fetching data:', err);
+        return res.status(500).json({ error: true, message: 'server error' });
+    }
+};

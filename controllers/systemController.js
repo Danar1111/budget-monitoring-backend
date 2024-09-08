@@ -13,7 +13,7 @@ function generateRandomString(length) {
 
 exports.createNewMonthlyBudget = () => {
     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-    cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
+    cron.schedule('0 0 20 * *', async () => { // ini untuk setiap tanggal 25
         const currentDate = new Date();
         let currentMonth = currentDate.getMonth() + 1;
         let currentYear = currentDate.getFullYear();
@@ -44,13 +44,12 @@ exports.createNewMonthlyBudgetActual = () => {
         const currentYear = currentDate.getFullYear();
         
         const [divisi] = await db.execute('SELECT idDivisi FROM divisi WHERE idDivisi != "ADMN"');
+        const [idIn] = await db.execute('SELECT idForecastPemasukan FROM forecast_pemasukan WHERE idDivisi != "ADMN" AND isApproved = "approved" AND Bulan = ? AND Tahun = ?', [currentMonth, currentYear]);
+        const [idOut] = await db.execute('SELECT idForecastPengeluaran FROM forecast_pengeluaran WHERE idDivisi != "ADMN" AND isApproved = "approved" AND Bulan = ? AND Tahun = ?', [currentMonth, currentYear]);
+
         for (let i = 0; i < divisi.length; i++) {
-            let idIn = generateRandomString(5);
-            let idOut = generateRandomString(5);
-            let tableNameIn = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualIn' + '-' + idIn;
-            let tableNameOut = divisi[i].idDivisi + '-' + currentMonth + '-' + currentYear + '-actualOut' + '-' + idOut;
-            await db.execute('INSERT INTO actual_pemasukan (idActualPemasukan, Bulan, Tahun, Total_Actual_Pemasukan) VALUES (?, ?, ?, ?)', [tableNameIn, currentMonth, currentYear, 0.00]);
-            await db.execute('INSERT INTO actual_pengeluaran (idActualPengeluaran, Bulan, Tahun, Total_Actual_Pengeluaran) VALUES (?, ?, ?, ?)', [tableNameOut, currentMonth, currentYear, 0.00]);
+            await db.execute('INSERT INTO actual_pemasukan (idActualPemasukan, Bulan, Tahun, Total_Actual_Pemasukan) VALUES (?, ?, ?, ?)', [idIn[i].idForecastPemasukan, currentMonth, currentYear, 0.00]);
+            await db.execute('INSERT INTO actual_pengeluaran (idActualPengeluaran, Bulan, Tahun, Total_Actual_Pengeluaran) VALUES (?, ?, ?, ?)', [idOut[i].idForecastPengeluaran, currentMonth, currentYear, 0.00]);
         }
         console.log(`create actual value for month ${currentMonth} and year ${currentYear} successfull`);
     });
@@ -58,7 +57,7 @@ exports.createNewMonthlyBudgetActual = () => {
 
 exports.emailMonthlyBudget = () => {
     // cron.schedule('*/10 * * * * *', async () => { // testing setiap 10 detik 
-    cron.schedule('0 0 25 * *', async () => { // ini untuk setiap tanggal 25
+    cron.schedule('0 0 20 * *', async () => { // ini untuk setiap tanggal 25
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
             port: 465,

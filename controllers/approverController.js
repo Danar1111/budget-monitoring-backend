@@ -261,10 +261,11 @@ exports.getActualRequest = async (req, res) => {
 
     // const currentDate = new Date();
     // const currentMonth = currentDate.getMonth();
+    const {aid} = req.params;
     const user_id = req.user.id;
 
     try {
-        const [data] = await db.execute('SELECT r.* FROM request_item_actual_pengeluaran r JOIN users u ON r.idUser = u.idUser WHERE u.Report_to = ?', [user_id]);
+        const [data] = await db.execute('SELECT r.* FROM request_item_actual_pengeluaran r JOIN users u ON r.idUser = u.idUser WHERE u.Report_to = ? AND idActualPengeluaran = ?', [user_id, aid]);
 
         res.status(200).send({
             error: false,
