@@ -338,6 +338,15 @@ router.get(
     }
 )
 
+router.get(
+    '/getdetailrequestactual/:aid',
+    authenticateToken,
+    authorizeRoles('supervisor'),
+    (req, res, next) => {
+        approverController.getDetailActualRequest(req, res, next);
+    }
+)
+
 router.post(
     '/setstatusrequest',
     authenticateToken,
