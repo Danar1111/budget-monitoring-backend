@@ -335,7 +335,7 @@ exports.approveToActualRequest = async (req, res) => {
             }
             
             await db.execute('INSERT INTO item_actual_pengeluaran VALUES (?, ?, ?, ?, ?, ?, ?)',[id, actual_outcome[0].idActualPengeluaran, id_request[0].idUser, id_request[0].idKategori, id_request[0].Nama_Item, Number(id_request[0].Harga_a), sisa]);
-            
+
             const [total_outcome] = await db.execute('SELECT SUM(Harga) as total FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [actual_outcome[0].idActualPengeluaran]);
 
             await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idDivisi = ? AND Bulan = ? AND Tahun = ?', [total_outcome[0].total, divisi[0].idDivisi, currentMonth, currentYear]);
@@ -375,7 +375,11 @@ exports.approveToActualRequest = async (req, res) => {
             if (data.length > 0) {
                 await db.execute('DELETE FROM item_actual_pengeluaran WHERE idItem = ?', [id]);
 
-                const [count] = await db.execute('SELECT SUM(Harga) as total FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [data[0].idActualPengeluaran]);
+                let [count] = await db.execute('SELECT SUM(Harga) as total FROM item_actual_pengeluaran WHERE idActualPengeluaran = ?', [data[0].idActualPengeluaran]);
+
+                if (count[0].total === null) {
+                    count[0].total = 0;
+                }
                 
                 await db.execute('UPDATE actual_pengeluaran SET Total_Actual_Pengeluaran = ? WHERE idActualPengeluaran = ?', [count[0].total, data[0].idActualPengeluaran]);
             }
