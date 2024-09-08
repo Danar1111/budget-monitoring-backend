@@ -393,7 +393,7 @@ router.delete(
 )
 
 router.get(
-    '/actual-outcome',
+    '/finance-actual-outcome',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {
