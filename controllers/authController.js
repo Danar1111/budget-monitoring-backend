@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
         } else if (user[0].Role === 'supervisor') {
             redirecUrl = '/supervisor';
         } else if (user[0].Role === 'user') {
-            redirecUrl = '/home';
+            redirecUrl = '/supervisor';
         } else {
             return res.status(200).json({error: true, message: 'not enrolled yet'});
         }
