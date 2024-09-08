@@ -278,6 +278,28 @@ exports.getActualRequest = async (req, res) => {
     }
 };
 
+exports.getDetailActualRequest = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+    
+    const {aid} = req.params;
+
+    try {
+        const [data] = await db.execute('SELECT * FROM request_item_actual_pengeluaran WHERE idRequest_Item = ?', [aid]);
+
+        res.status(200).send({
+            error: false,
+            message: 'Data fetched successfully',
+            data: data
+        });
+    } catch (err) {
+        console.error('Error fetching data:',err);
+        res.status(500).send({ error: true, message: 'Server error' })
+    }
+};
+
 exports.approveToActualRequest = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
