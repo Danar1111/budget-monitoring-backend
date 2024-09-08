@@ -348,7 +348,7 @@ router.post(
 )
 
 router.get(
-    '/forecast-income',
+    '/actual-income',
     authenticateToken,
     authorizeDivision('finance'),
     (req, res, next) => {

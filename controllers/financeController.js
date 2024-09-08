@@ -136,13 +136,13 @@ exports.monthlyActualOutcome = async (req, res) => {
         return res.status(400).json({ error: errors.array() });
     }
 
-    const outcome = await db.execute('SELECT * FROM actual_pengeluaran');
+    const [outcome] = await db.execute('SELECT * FROM actual_pengeluaran');
 
     res.status(200).send({
         error: false,
         message: 'success',
-        data: outcome,
-    })
+        data: outcome
+    });
 };
 
 exports.updateItemMonthlyActualOutcome = async (req, res) => {
